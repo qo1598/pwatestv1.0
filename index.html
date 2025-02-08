@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>스네이크 게임</title>
     <link rel="manifest" href="/pwatestv1.0/manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/bM0dfyWc/maskable-icon-x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <style>
         body {
             margin: 0;
@@ -51,7 +55,6 @@
         const scoreElement = document.getElementById('score');
         const startButton = document.getElementById('startButton');
 
-        // 캔버스 크기 설정
         canvas.width = 300;
         canvas.height = 300;
 
@@ -99,12 +102,10 @@
         function checkGameOver() {
             const head = snake[0];
             
-            // 벽과 충돌
             if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
                 return true;
             }
             
-            // 자기 자신과 충돌
             for (let i = 1; i < snake.length; i++) {
                 if (head.x === snake[i].x && head.y === snake[i].y) {
                     return true;
@@ -162,14 +163,12 @@
             const deltaY = touchEndY - touchStartY;
 
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                // 수평 이동
                 if (deltaX > 0 && dx === 0) {
                     dx = 1; dy = 0;
                 } else if (deltaX < 0 && dx === 0) {
                     dx = -1; dy = 0;
                 }
             } else {
-                // 수직 이동
                 if (deltaY > 0 && dy === 0) {
                     dx = 0; dy = 1;
                 } else if (deltaY < 0 && dy === 0) {
@@ -181,7 +180,6 @@
             touchStartY = null;
         }
 
-        // 키보드 컨트롤
         document.addEventListener('keydown', e => {
             switch(e.key) {
                 case 'ArrowUp':
@@ -199,11 +197,9 @@
             }
         });
 
-        // 터치 이벤트 리스너
         canvas.addEventListener('touchstart', handleTouchStart);
         canvas.addEventListener('touchmove', handleTouchMove);
 
-        // 게임 시작 버튼
         startButton.addEventListener('click', () => {
             if (!gameRunning) {
                 snake = [{ x: 10, y: 10 }];
@@ -217,10 +213,21 @@
             }
         });
 
-        // 기본 터치 동작 방지
         document.addEventListener('touchmove', function(e) {
             e.preventDefault();
         }, { passive: false });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/pwatestv1.0/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker 등록 성공:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker 등록 실패:', err);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
