@@ -1,7 +1,7 @@
 {
     "name": "스네이크 게임",
     "short_name": "스네이크",
-    "start_url": "/pwatestv1.0/",  // 이 부분을 수정
+    "start_url": "/pwatestv1.0/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
@@ -9,12 +9,14 @@
         {
             "src": "https://i.ibb.co/bM0dfyWc/maskable-icon-x192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
             "src": "https://i.ibb.co/YFCGbNgv/maskable-icon-x512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         }
     ]
 }
