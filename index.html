@@ -41,18 +41,63 @@
             font-size: 24px;
             margin-bottom: 10px;
         }
+        
+        /* 터치 이벤트를 명시적으로 무시하기 위한 오버레이 */
+        #touchBlocker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: none; /* 기본적으로 숨김 */
+            background-color: transparent;
+        }
     </style>
 </head>
 <body>
     <div id="score">점수: 0</div>
     <canvas id="gameCanvas"></canvas>
     <button id="startButton">게임 시작</button>
+    <!-- 모바일에서 터치 이벤트를 가로채는 투명 오버레이 -->
+    <div id="touchBlocker"></div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreElement = document.getElementById('score');
         const startButton = document.getElementById('startButton');
+        const touchBlocker = document.getElementById('touchBlocker');
+
+        // 모바일 기기 감지 함수
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   (window.innerWidth <= 800 && window.innerHeight <= 900);
+        }
+
+        // 모바일 기기인 경우 터치 블로커 활성화
+        if (isMobileDevice()) {
+            touchBlocker.style.display = 'block';
+            
+            // 모바일에서 터치 이벤트가 캔버스에 전달되지 않도록 함
+            touchBlocker.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+            
+            touchBlocker.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+            
+            touchBlocker.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }, true);
+        }
 
         canvas.width = 300;
         canvas.height = 300;
@@ -68,6 +113,21 @@
         let dy = 0;
         let score = 0;
         let gameRunning = false;
+        
+        // 브라우저에서 기본 터치 동작 방지
+        document.addEventListener('touchstart', function(e) {
+            if (isMobileDevice()) {
+                e.preventDefault();
+                return false;
+            }
+        }, { passive: false });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (isMobileDevice()) {
+                e.preventDefault();
+                return false;
+            }
+        }, { passive: false });
 
         function drawGame() {
             if (!gameRunning) return;
@@ -163,6 +223,7 @@
             }
         });
 
+        // 모바일에서도 시작 버튼은 작동하도록 함
         startButton.addEventListener('click', () => {
             if (!gameRunning) {
                 snake = [{ x: 10, y: 10 }];
@@ -175,6 +236,19 @@
                 drawGame();
             }
         });
+
+        // 캔버스에 대한 터치 이벤트 핸들러 명시적으로 비활성화
+        canvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }, true);
+        
+        canvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }, true);
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
